@@ -19,21 +19,24 @@ Promise.race(allCards)
   })
   .catch(err => console.log(err)) 
 
-async function setup(){
-    let btn = $('button')
-    let cardArea = $('#card-area')
-    let cardsShuffled= axios.get('https://deckofcardsapi.com/api/deck/new/shuffle/')
+$(function(){
+let deckId= null
+let btn = $('button')
+let cardArea = $('#card-area')
+$.getJSON('https://deckofcardsapi.com/api/deck/new/shuffle/')
+    .then(data =>{
+        deckId = data.deck_id
+        console.log(deckId)
+        btn.show();
+    }); 
+    btn.on('click',  function(){
+        $.getJSON(`https://deckofcardsapi.com/api/deck/${deckId}/draw/`)
 
-    
-    
+        .then(data => {
+            console.log(data)
+            cardArea.append(`<img  src="${data.cards[0].image}"></img>`)
+            
+        })
+    })
 
-    btn.show().on('click', 
-    async function(){
-        axios.get(`https://deckofcardsapi.com/api/deck/${cardsShuffled.deck_id}/draw/`)
-        
-        .then(c1 => {cardArea.append(`<img  src="${c1.data.cards[0].image}"></img>`)})
-        console.log(c1)
-    }
-    )
-    
-}
+});
